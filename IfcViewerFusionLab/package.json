@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "@thatopen/components-front": "^2.4.3",
+    "@thatopen/fragments": "^2.4.0",
+    "@thatopen/ui-obc": "^2.4.1",
+    "vite": "^6.0.7",
+    "web-ifc": "^0.0.66"
+  },
+  "name": "thatopencompany-vite",
+  "version": "1.0.0",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sebastian Esser",
+  "license": "ISC",
+  "description": ""
+}
