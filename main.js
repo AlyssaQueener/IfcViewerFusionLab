@@ -41,14 +41,17 @@ world.scene.three.background = null;
 const ifcLoader = components.get(OBC.IfcLoader);
 await ifcLoader.setup();
 const file = await fetch(
-    "data/AC20-FZK-Haus.ifc"
+    "data/HDM Main.ifc"
 );
 const buffer = await file.arrayBuffer();
 const typedArray = new Uint8Array(buffer);
 const model = await ifcLoader.load(typedArray);
 world.scene.three.add(model);
 debugger;
-
+/*const geometry = new THREE.PlaneGeometry(15, 25, 1);
+const material = new THREE.MeshLambertMaterial({ color: "#0000FF" });
+const plane = new THREE.Mesh(geometry,material);
+world.scene.three.add(plane);*/
 // Process model relations
 const indexer = components.get(OBC.IfcRelationsIndexer);
 await indexer.process(model);
