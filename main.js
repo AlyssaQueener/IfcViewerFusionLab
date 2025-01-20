@@ -2,6 +2,7 @@ import * as BUI from "@thatopen/ui";
 import * as OBC from "@thatopen/components";
 import * as OBF from "@thatopen/components-front";
 import * as CUI from "@thatopen/ui-obc";
+import ifcUrl from './hdmMain.ifc?url'
 
 BUI.Manager.init();
 
@@ -41,7 +42,7 @@ world.scene.three.background = null;
 const ifcLoader = components.get(OBC.IfcLoader);
 await ifcLoader.setup();
 const file = await fetch(
-    "data/HDM Main.ifc"
+    ifcUrl,
 );
 const buffer = await file.arrayBuffer();
 const typedArray = new Uint8Array(buffer);
