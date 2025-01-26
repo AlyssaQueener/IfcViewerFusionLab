@@ -172,8 +172,8 @@ const propertiesPanel = BUI.Component.create(() => {
                  <div id="comment-controls" style="display: none;">
                     <textarea 
                         id="comment-textarea" 
-                        placeholder="Leave a detailed comment about this element..." 
-                        style="width: 100%; 
+                        placeholder="Leave a comment..." 
+                        style="width: 90%; 
                                min-height: 100px; 
                                margin-bottom: 10px; 
                                padding: 8px; 
