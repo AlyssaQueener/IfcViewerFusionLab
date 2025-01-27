@@ -98,26 +98,26 @@ let currentSelectedElementId = null;
 function updateCommentSection(elementId) {
     const commentContainer = propertiesPanel.querySelector('#comment-section');
     const commentControls = propertiesPanel.querySelector('#comment-controls');
+    const commentWrapper = propertiesPanel.querySelector('#comment-wrapper');
     
-    // Filter comments for the current element
-    const elementComments = comments.filter(comment => comment.elementId === elementId);
-    
-    // Show comment controls only when an element is selected
+    // Show/hide entire comment wrapper based on element selection
     if (elementId) {
+        commentWrapper.style.display = 'block';
         commentControls.style.display = 'block';
+        
+        // Filter and display comments for the current element
+        const elementComments = comments.filter(comment => comment.elementId === elementId);
+        commentContainer.innerHTML = elementComments.length > 0 
+            ? elementComments.map(comment => `
+                <div style="border-bottom: 1px solid #eee; padding: 8px 0;">
+                    <p>${comment.text}</p>
+                    <small style="color: gray;">${comment.timestamp.toLocaleString()}</small>
+                </div>
+            `).join('') 
+            : '<p>No comments for this element</p>';
     } else {
-        commentControls.style.display = 'none';
+        commentWrapper.style.display = 'none';
     }
-    
-    // Clear previous comments
-    commentContainer.innerHTML = elementComments.length > 0 
-        ? elementComments.map(comment => `
-            <div style="border-bottom: 1px solid #eee; padding: 8px 0;">
-                <p>${comment.text}</p>
-                <small style="color: gray;">${comment.timestamp.toLocaleString()}</small>
-            </div>
-        `).join('') 
-        : '<p>No comments for this element</p>';
 };
 
 function submitComment() {
@@ -139,15 +139,12 @@ function submitComment() {
     }
 };
 
-// Hider
-// Initialize hider component
-const hider = components.get(OBC.Hider);
+
 
 // Setup classifier
 const classifier = components.get(OBC.Classifier);
-classifier.byEntity(model);
+classifier.byIfcRel(model, WEBIFC.IFCRELCONTAINEDINSPATIALSTRUCTURE, "storeys");
 
-//Hider
 
 // Create properties panel component
 const propertiesPanel = BUI.Component.create(() => {
@@ -169,6 +166,7 @@ const propertiesPanel = BUI.Component.create(() => {
                     <bim-button @click=${expandTable} label=${propertiesTable.expanded ? "Collapse" : "Expand"}></bim-button>
                 </div>
                 <bim-text-input @input=${onTextInput} placeholder="Search Property" debounce="250"></bim-text-input>
+                <div id="comment-wrapper" style="display: none;">
                  <div id="comment-controls" style="display: none;">
                     <textarea 
                         id="comment-textarea" 
@@ -187,6 +185,7 @@ const propertiesPanel = BUI.Component.create(() => {
                     ></bim-button>
                 </div>
                 <div id="comment-section" style="max-height: 200px; overflow-y: auto;"></div>
+                </div>
                 ${propertiesTable}
             </bim-panel-section>
             <bim-panel-section collapsed label="Controls">
@@ -231,10 +230,6 @@ const propertiesPanel = BUI.Component.create(() => {
                     }}">
                 </bim-button>
             </bim-panel-section>
-            <bim-panel-section collapsed label="Hide Elements">
-                <bim-panel-section collapsed label="Categories" name="Categories">
-                </bim-panel-section>
-            </bim-panel-section>
         </bim-panel>
     `;
 });
@@ -257,6 +252,13 @@ app.layouts = {
     }
 };
 
+/*
+"propertiesPanel viewport"
+        /25rem 1fr
+        `,
+*/
+
+
 app.layout = "main";
 var viewer = document.getElementById("viewerContainer");
 viewer.append(app);
@@ -264,47 +266,9 @@ viewer.append(app);
 
 
 // Create classes object (categories)
-const classes = {};
-const classNames = Object.keys(classifier.list.entities);
+
+const relNames = Object.keys(classifier.list.entities);
 debugger;
-for (const name of classNames) {
-    classes[name] = true;
-}
-
-/*Create main UI panel
-const panel = BUI.Component.create(() => {
-    return BUI.html`
-        <bim-panel active label="IFC Model Visibility" class="options-menu">
-            <bim-panel-section collapsed label="Controls">
-                <bim-panel-section collapsed label="Categories" name="Categories">
-                </bim-panel-section>
-            </bim-panel-section>
-        </bim-panel>
-    `;
-});
-
-document.body.append(panel);*/
-
-// Get panel sections
-const categorySection = propertiesPanel.querySelector("bim-panel-section[name='Categories']");
-
-
-
-// Create category checkboxes
-for (const name in classes) {
-    const checkbox = BUI.Component.create(() => {
-        return BUI.html`
-            <bim-checkbox checked label="${name}"
-                @change="${(event) => {
-                    const target = event.target;
-                    const found = classifier.find({ entities: [name] });
-                    hider.set(target.value, found);
-                }}">
-            </bim-checkbox>
-        `;
-    });
-    categorySection.append(checkbox);
-}
 
 
 
