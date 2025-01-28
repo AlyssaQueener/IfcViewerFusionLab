@@ -2,9 +2,11 @@ import * as BUI from "@thatopen/ui";
 import * as OBC from "@thatopen/components";
 import * as OBF from "@thatopen/components-front";
 import * as CUI from "@thatopen/ui-obc";
-import ifcUrl from './Final_Bim_Model.ifc?url'
+import ifcUrl from './ass1_final.ifc?url'
 import * as THREE from "three";
 import * as WEBIFC from "web-ifc";
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import objUrl from './PaketPosthalle.obj?url'
 
 BUI.Manager.init();
 
@@ -47,13 +49,37 @@ const file = await fetch(
 const buffer = await file.arrayBuffer();
 const typedArray = new Uint8Array(buffer);
 const model = await ifcLoader.load(typedArray);
-world.scene.three.add(model);
+//world.scene.three.add(model);
 debugger;
-/*const geometry = new THREE.PlaneGeometry(15, 25, 1);
-const material = new THREE.MeshLambertMaterial({ color: "#0000FF" });
-const plane = new THREE.Mesh(geometry,material);
-world.scene.three.add(plane);*/
-// Process model relations
+// instantiate a loader
+const loader = new OBJLoader();
+const group = new THREE.Group();
+group.add(model)
+// load a resource
+loader.load(
+	// resource URL
+	objUrl,
+	// called when resource is loaded
+	function ( object ) {
+
+        group.add(object)
+
+	},
+	// called when loading is in progress
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+        console.log(error)
+
+	}
+);
+world.scene.three.add( group);
 const indexer = components.get(OBC.IfcRelationsIndexer);
 await indexer.process(model);
 debugger;
