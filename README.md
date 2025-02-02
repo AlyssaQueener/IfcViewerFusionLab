@@ -15,4 +15,3 @@ To start the example, type:
 
 ```console
 npx vite --port 3000
-```
