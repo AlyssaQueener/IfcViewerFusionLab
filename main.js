@@ -2,11 +2,10 @@ import * as BUI from "@thatopen/ui";
 import * as OBC from "@thatopen/components";
 import * as OBF from "@thatopen/components-front";
 import * as CUI from "@thatopen/ui-obc";
-import ifcUrl from './ass1_final.ifc?url'
+import ifcUrl from './Bim_Model_site_walls 311.ifc?url'
 import * as THREE from "three";
 import * as WEBIFC from "web-ifc";
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import objUrl from './PaketPosthalle.obj?url'
+
 
 BUI.Manager.init();
 
@@ -39,55 +38,33 @@ components.init();
 
 const grids = components.get(OBC.Grids);
 grids.create(world);
+const fragments = components.get(OBC.FragmentsManager);
 
-// Load and setup the IFC model
-const ifcLoader = components.get(OBC.IfcLoader);
-await ifcLoader.setup();
-const file = await fetch(
-    ifcUrl,
-);
-const buffer = await file.arrayBuffer();
-const typedArray = new Uint8Array(buffer);
-const model = await ifcLoader.load(typedArray);
-//world.scene.three.add(model);
-debugger;
-// instantiate a loader
-const loader = new OBJLoader();
-const group = new THREE.Group();
-group.add(model)
-// load a resource
-loader.load(
-	// resource URL
-	objUrl,
-	// called when resource is loaded
-	function ( object ) {
+let uuid = "";
 
-        group.add(object)
+const file = await fetch("./finalModel.frag");
+const data = await file.arrayBuffer();
+const buffer = new Uint8Array(data);
+const group = fragments.load(buffer);
+world.scene.three.add(group);
+uuid = group.uuid;
 
-	},
-	// called when loading is in progress
-	function ( xhr ) {
+const properties = await fetch("./finalModelProperties.json");
+group.setLocalProperties(await properties.json());
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-
-	},
-	// called when loading has errors
-	function ( error ) {
-
-		console.log( 'An error happened' );
-        console.log(error)
-
-	}
-);
-world.scene.three.add( group);
 const indexer = components.get(OBC.IfcRelationsIndexer);
-await indexer.process(model);
-debugger;
+delete indexer.relationMaps[group.uuid];
+
+const relationsIndexFile = await fetch("./relations-index-finalBim.json");
+const relationsIndex = indexer.getRelationsMapFromJSON(
+  await relationsIndexFile.text()
+);
+indexer.setRelationMap(group, relationsIndex);
 console.log(indexer.relationMaps);
-// Create properties table
+
 const [propertiesTable, updatePropertiesTable] = CUI.tables.elementProperties({
-    components,
-    fragmentIdMap: {}
+  components,
+  fragmentIdMap: {}
 });
 
 propertiesTable.preserveStructureOnFilter = true;
@@ -167,9 +144,7 @@ function submitComment() {
 
 
 
-// Setup classifier
-const classifier = components.get(OBC.Classifier);
-classifier.byIfcRel(model, WEBIFC.IFCRELCONTAINEDINSPATIALSTRUCTURE, "storeys");
+
 
 
 // Create properties panel component
@@ -262,7 +237,7 @@ const propertiesPanel = BUI.Component.create(() => {
 
 // Setup bounding box
 const fragmentBbox = components.get(OBC.BoundingBoxer);
-fragmentBbox.add(model);
+fragmentBbox.add(group);
 const bbox = fragmentBbox.getMesh();
 fragmentBbox.reset();
 
@@ -288,13 +263,10 @@ app.layouts = {
 app.layout = "main";
 var viewer = document.getElementById("viewerContainer");
 viewer.append(app);
-//document.body.append(app);
 
 
-// Create classes object (categories)
 
-const relNames = Object.keys(classifier.list.entities);
-debugger;
+
 
 
 
