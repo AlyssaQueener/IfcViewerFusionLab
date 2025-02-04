@@ -2,7 +2,6 @@ import * as BUI from "@thatopen/ui";
 import * as OBC from "@thatopen/components";
 import * as OBF from "@thatopen/components-front";
 import * as CUI from "@thatopen/ui-obc";
-import ifcUrl from './Bim_Model_site_walls 311.ifc?url'
 import * as THREE from "three";
 import * as WEBIFC from "web-ifc";
 
