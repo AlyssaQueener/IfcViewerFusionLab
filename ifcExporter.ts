@@ -94,8 +94,17 @@ await fragmentIfcLoader.setup();
 /* MD
   We can further configure the conversion using the `webIfc` object. In this example, we will make the IFC model go to the origin of the scene (don't worry, this supports model federation):
   */
+  const excludedCats = [
+    WEBIFC.IFCPLATE,
+    
+  ];
+  
+  for (const cat of excludedCats) {
+    fragmentIfcLoader.settings.excludedCategories.add(cat);
+  }
 
 fragmentIfcLoader.settings.webIfc.COORDINATE_TO_ORIGIN = true;
+fragmentIfcLoader.settings.saveLocations = true;
 
 /* MD
   ### 🚗🔥 Loading the IFC
@@ -111,12 +120,12 @@ fragmentIfcLoader.settings.webIfc.COORDINATE_TO_ORIGIN = true;
 
 async function loadIfc() {
   const file = await fetch(
-    "./Bim_Model_site_walls 311.ifc",
+    "./250204_Bim_Model and site.ifc",
   );
   const data = await file.arrayBuffer();
   const buffer = new Uint8Array(data);
   const model = await fragmentIfcLoader.load(buffer);
-  model.name = "example";
+  model.name = "BimWithBlocks";
   world.scene.three.add(model);
 }
 
@@ -149,12 +158,13 @@ async function exportFragments() {
   }
   debugger;
   const group = Array.from(fragments.groups.values())[0];
+  debugger
   const data = fragments.export(group);
-  download(new File([new Blob([data])], "finalModel.frag"));
+  download(new File([new Blob([data])], "finalModelwithBlocks.frag"));
 
   const properties = group.getLocalProperties();
   if (properties) {
-    download(new File([JSON.stringify(properties)], "finalModelProperties.json"));
+    download(new File([JSON.stringify(properties)], "finalModelPropertieswithBlocks.json"));
   }
 }
 

@@ -74,30 +74,26 @@ grids.create(world);
 
 const fragments = components.get(OBC.FragmentsManager);
 
-/* MD
-  Now we can load a fragment from a file. We will fetch the model data and use the `load` method of the FragmentsManager to get the fragment object. Then, we'll add it to the scene of the current world. We will also create an UUID of the model to later get it somewhere else.
-*/
-
 let uuid = "";
 
 
 const file = await fetch(
-      "./finalModel.frag",
+      "./finalModelwithBlocks.frag",
 );
 const data = await file.arrayBuffer();
 const buffer = new Uint8Array(data);
 const group = fragments.load(buffer);
 world.scene.three.add(group);
-uuid = group.uuid;
+
 const properties = await fetch(
-  "./finalModelProperties.json",
+  "./finalModelPropertieswithBlocks.json",
 );
 group.setLocalProperties(await properties.json());
 const indexer = components.get(OBC.IfcRelationsIndexer);
 
-delete indexer.relationMaps[group.uuid];
+
 const relationsIndexFile = await fetch(
-    "./relations-index-finalBim.json",
+    "./relations-index-finalBimWithBlocks.json",
   );
   const relationsIndex = indexer.getRelationsMapFromJSON(
     await relationsIndexFile.text(),

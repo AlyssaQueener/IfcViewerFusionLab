@@ -51,11 +51,12 @@ grids.create(world);
 
 world.scene.three.background = null;
 
-
+const ifcSettings = new OBC.IfcFragmentSettings;
+ifcSettings.excludedCategories.add(WEBIFC.IFCPLATE);
 const ifcLoader = components.get(OBC.IfcLoader);
-await ifcLoader.setup();
+await ifcLoader.setup(ifcSettings);
 const file = await fetch(
-  "./Bim_Model_site_walls 311.ifc",
+  "./250204_Bim_Model and site.ifc",
 );
 const buffer = await file.arrayBuffer();
 const typedArray = new Uint8Array(buffer);
@@ -154,7 +155,7 @@ const panel = BUI.Component.create<BUI.PanelSection>(() => {
         <bim-button 
           label="Download relations" 
           @click="${async () => {
-            downloadJSON(allRelationsJSON, "relations-index-finalBim.json");
+            downloadJSON(allRelationsJSON, "relations-index-finalBimWithBlocks.json");
           }}">  
         </bim-button>        
 
