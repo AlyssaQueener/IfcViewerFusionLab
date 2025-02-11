@@ -56,7 +56,7 @@ ifcSettings.excludedCategories.add(WEBIFC.IFCPLATE);
 const ifcLoader = components.get(OBC.IfcLoader);
 await ifcLoader.setup(ifcSettings);
 const file = await fetch(
-  "./250204_Bim_Model and site.ifc",
+  "./250210_Model_Base_materia_RENDERwalls nooo tree.ifc",
 );
 const buffer = await file.arrayBuffer();
 const typedArray = new Uint8Array(buffer);
@@ -67,28 +67,6 @@ world.scene.three.add(model);
 
 const indexer = components.get(OBC.IfcRelationsIndexer);
 await indexer.process(model);
-
-/* MD
- The result of that is basically a map where the keys are the expressIDs and the values are other expressIDs related to the first one and grouped by the type of relation. You don't need to worry too much about the details of that, as the usage is pretty straighforward 🔝. The only thing that matters is you've now an easy way to access the entities related to your element 🙂
-
- One of the most important relations between different entities is the `IfcRelDefinesByProperties`. That relation links together an arbitrary entity with a set of `IfcPropertySet` entities that applies properties. Getting them with the indexer once the model is indexed is pretty easy:
- */
-
-
-/* MD
- :::tip
-
-  IsDefinedBy is the inverse attribute name in the IFC Schema that holds the relations with property sets 😉
-
- :::
-
- Awesome! really easy right?
-
-  ### ↘️ Exporting the indexation
-  ---
-
- In bigger models, the process to calculate the relations index may take some time. There is no reason to calculate over and over the relations index every time you load a model. If the model hasn't change, their properties shouldn't neither! So, let's download the relations index to load it later.
- */
 
 const downloadJSON = (json: string, name: string) => {
   const file = new File([json], name);
@@ -103,48 +81,7 @@ const json = indexer.serializeModelRelations(model);
 console.log(json);
 const allRelationsJSON = indexer.serializeAllRelations();
 
-/* MD
- :::tip
-
- As `@thatopen/components` can be used in either NodeJS and Browser environments, the logic to generate a JSON file may vary!
-
- :::
-
- Now, in case you've loaded several models and want to get all the computed relations, there is also a handy method to do it.
- */
-
-
-/* MD 
-  ### ↗️ Loading back the relations index
-  ---
-   
-  What do we gain with having a pre-processed relations index if we can't use it again, right? Well, let's use the downloaded relations index 😎
- */
-
-/*Lets first delete the existing model relations
-delete indexer.relationMaps[model.uuid];
-const relationsIndexFile = await fetch(
-  "https://thatopen.github.io/engine_components/resources/small-relations.json",
-);
-const relationsIndex = indexer.getRelationsMapFromJSON(
-  await relationsIndexFile.text(),
-);
-
-indexer.setRelationMap(model, relationsIndex);
-
-*/
-/* MD
-  ### 🧩 Adding some UI
-  ---
-
-  We will use the `@thatopen/ui` library to add some simple and cool UI elements to our app. First, we need to call the `init` method of the `BUI.Manager` class to initialize the library:
-*/
-
 BUI.Manager.init();
-
-/* MD
-Now we will add some UI export the relations that we just generated. For more information about the UI library, you can check the specific documentation for it!
-*/
 
 const panel = BUI.Component.create<BUI.PanelSection>(() => {
   return BUI.html`

@@ -51,7 +51,7 @@ world.renderer.three.shadowMap.enabled = true;
 world.renderer.three.shadowMap.type = THREE.PCFSoftShadowMap;
 let uuid = "";
 
-const file = await fetch("./finalModelwithBlocks.frag");
+const file = await fetch("./0211finalModelwithBlocks.frag");
 const data = await file.arrayBuffer();
 const buffer = new Uint8Array(data);
 const group = fragments.load(buffer);
@@ -61,13 +61,15 @@ uuid = group.uuid;
 const axesHelper = new THREE.AxesHelper( 30 );
 world.scene.three.add(axesHelper);
 
-const properties = await fetch("./finalModelPropertieswithBlocks.json");
+//ADD Properties manually
+
+const properties = await fetch("./0211finalModelPropertieswithBlocks.json");
 group.setLocalProperties(await properties.json());
 
 const indexer = components.get(OBC.IfcRelationsIndexer);
 delete indexer.relationMaps[group.uuid];
 
-const relationsIndexFile = await fetch("./relations-index-finalBimWithBlocks.json");
+const relationsIndexFile = await fetch("./0211relations-index-finalBimWithBlocks.json");
 const relationsIndex = indexer.getRelationsMapFromJSON(
   await relationsIndexFile.text()
 );
@@ -152,10 +154,10 @@ highlighter.zoomToSelection = true;
 
 var exclude = {'309aa274-3c53-4a05-b48e-9ba82c21b244': new Set([142106]), 'edbd9e68-5856-4780-9330-74e4e722ef70':new Set([2029]),'54b5a583-f953-4d07-a5ae-57b94786e4b4':new Set([806]),'4dd74822-a4f6-41ab-b633-f821d580e519': new Set([561]),'287e1cc3-f671-44d4-8c40-fd658e314634':new Set([141440]),'9219ecba-9068-45ae-bfcb-9092ef5cb6ab':new Set([142138]),'0464afdb-0a75-4b91-a434-b9a6099c0845': new Set([141650]),'1b439b1f-d9b5-4429-950f-1e827dad126c':new Set([141682]),'6abee5c5-6bb6-4699-9adb-dfd272336839':new Set([141744]),'443dc757-a105-4089-894d-e18ab284491f':new Set([141714]),'1adcb3a4-d16b-464a-8055-95d00a0aa2f0':new Set([1664]),'b05a4474-de47-41e3-b0ec-dc10ffb51c3e':new Set([1295])};
 
-highlighter.selectable = {
+/*highlighter.selectable = {
     'select': exclude,
     'hover' : exclude
-};
+};*/
 
 
 

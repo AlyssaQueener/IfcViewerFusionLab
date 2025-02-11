@@ -120,12 +120,11 @@ fragmentIfcLoader.settings.saveLocations = true;
 
 async function loadIfc() {
   const file = await fetch(
-    "./250204_Bim_Model and site.ifc",
+    "./250210_Model_Base_materia_RENDERwalls nooo tree.ifc",
   );
   const data = await file.arrayBuffer();
   const buffer = new Uint8Array(data);
   const model = await fragmentIfcLoader.load(buffer);
-  model.name = "BimWithBlocks";
   world.scene.three.add(model);
 }
 
@@ -160,13 +159,15 @@ async function exportFragments() {
   const group = Array.from(fragments.groups.values())[0];
   debugger
   const data = fragments.export(group);
-  download(new File([new Blob([data])], "finalModelwithBlocks.frag"));
+  download(new File([new Blob([data])], "0211finalModelwithBlocks.frag"));
 
   const properties = group.getLocalProperties();
   if (properties) {
-    download(new File([JSON.stringify(properties)], "finalModelPropertieswithBlocks.json"));
+    download(new File([JSON.stringify(properties)], "0211finalModelPropertieswithBlocks.json"));
   }
 }
+
+
 
 /* MD
   ### 🧠🧼 Cleaning memory
